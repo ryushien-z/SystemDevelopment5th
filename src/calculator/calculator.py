@@ -5,6 +5,7 @@ A simple calculator module with basic arithmetic operations.
 
 class InvalidInputException(Exception):
     """Exception raised when input values are outside the valid range."""
+
     pass
 
 
@@ -25,7 +26,9 @@ class Calculator:
             if not isinstance(v, (int, float)):
                 raise InvalidInputException("Inputs must be int or float")
             if v < self.MIN_VALUE or v > self.MAX_VALUE:
-                raise InvalidInputException(f"Input {v} outside allowed range [{self.MIN_VALUE}, {self.MAX_VALUE}]")
+                raise InvalidInputException(
+                    f"Input {v} outside allowed range [{self.MIN_VALUE}, {self.MAX_VALUE}]"
+                )
 
     def add(self, a, b):
         """Add two numbers.

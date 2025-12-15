@@ -218,22 +218,28 @@ class TestInvalidInput:
 class TestBoundaryAndMutation:
     """Additional boundary and mutation-resistant tests to improve coverage."""
 
-    @pytest.mark.parametrize("a,b", [
-        (1, 2),
-        (2.5, 3.5),
-        (0, 0),
-        (Calculator.MAX_VALUE, -1),
-    ])
+    @pytest.mark.parametrize(
+        "a,b",
+        [
+            (1, 2),
+            (2.5, 3.5),
+            (0, 0),
+            (Calculator.MAX_VALUE, -1),
+        ],
+    )
     def test_add_commutativity(self, a, b):
         """Addition should be commutative for valid numeric inputs."""
         calc = Calculator()
         assert calc.add(a, b) == calc.add(b, a)
 
-    @pytest.mark.parametrize("a,b", [
-        (1, 2),
-        (2.5, 3.0),
-        (0, 5),
-    ])
+    @pytest.mark.parametrize(
+        "a,b",
+        [
+            (1, 2),
+            (2.5, 3.0),
+            (0, 5),
+        ],
+    )
     def test_multiply_commutativity(self, a, b):
         """Multiplication should be commutative for valid numeric inputs."""
         calc = Calculator()
@@ -274,13 +280,16 @@ class TestBoundaryAndMutation:
         b = 500
         assert calc.subtract(a, b) == -1300
 
-    @pytest.mark.parametrize("a,b,op,expected", [
-        (5, 3, "add", 8),
-        (5, 3, "subtract", 2),
-        (5, 3, "multiply", 15),
-        (6, 3, "divide", 2),
-        (2.5, 0.5, "divide", 5.0),
-    ])
+    @pytest.mark.parametrize(
+        "a,b,op,expected",
+        [
+            (5, 3, "add", 8),
+            (5, 3, "subtract", 2),
+            (5, 3, "multiply", 15),
+            (6, 3, "divide", 2),
+            (2.5, 0.5, "divide", 5.0),
+        ],
+    )
     def test_parametrized_operations(self, a, b, op, expected):
         """Parametrized smoke tests for basic operations to increase coverage."""
         calc = Calculator()
@@ -311,7 +320,7 @@ class TestMutationHardening:
         """Complex numbers are not allowed by validation and should raise InvalidInputException."""
         calc = Calculator()
         with pytest.raises(InvalidInputException):
-            calc.add(1+2j, 1)
+            calc.add(1 + 2j, 1)
 
     def test_reject_string_and_list_types(self):
         """Strings and lists should be rejected by the validator."""
@@ -319,44 +328,56 @@ class TestMutationHardening:
         with pytest.raises(InvalidInputException):
             calc.add("1", 2)
         with pytest.raises(InvalidInputException):
-            calc.multiply([1,2], 3)
+            calc.multiply([1, 2], 3)
 
-    @pytest.mark.parametrize("a,b,expected", [
-        (5, 3, 8),
-        (5, -3, 2),
-        (-5, 3, -2),
-        (1.5, 2.25, 3.75),
-    ])
+    @pytest.mark.parametrize(
+        "a,b,expected",
+        [
+            (5, 3, 8),
+            (5, -3, 2),
+            (-5, 3, -2),
+            (1.5, 2.25, 3.75),
+        ],
+    )
     def test_add_varied_inputs(self, a, b, expected):
         """More addition cases to catch operator-replacement mutations."""
         calc = Calculator()
         assert calc.add(a, b) == pytest.approx(expected)
 
-    @pytest.mark.parametrize("a,b,expected", [
-        (5, 3, 2),
-        (3, 5, -2),
-        (2.5, 1.25, 1.25),
-    ])
+    @pytest.mark.parametrize(
+        "a,b,expected",
+        [
+            (5, 3, 2),
+            (3, 5, -2),
+            (2.5, 1.25, 1.25),
+        ],
+    )
     def test_subtract_varied_inputs(self, a, b, expected):
         """More subtraction cases to catch mutations that swap operators."""
         calc = Calculator()
         assert calc.subtract(a, b) == pytest.approx(expected)
 
-    @pytest.mark.parametrize("a,b,expected", [
-        (5, 3, 15),
-        (-5, 3, -15),
-        (2.5, 0.4, 1.0),
-    ])
+    @pytest.mark.parametrize(
+        "a,b,expected",
+        [
+            (5, 3, 15),
+            (-5, 3, -15),
+            (2.5, 0.4, 1.0),
+        ],
+    )
     def test_multiply_varied_inputs(self, a, b, expected):
         """More multiplication cases to catch operator-replacement mutations."""
         calc = Calculator()
         assert calc.multiply(a, b) == pytest.approx(expected)
 
-    @pytest.mark.parametrize("a,b,expected", [
-        (7, 2, 3.5),
-        (5, 2, 2.5),
-        (2.5, 0.5, 5.0),
-    ])
+    @pytest.mark.parametrize(
+        "a,b,expected",
+        [
+            (7, 2, 3.5),
+            (5, 2, 2.5),
+            (2.5, 0.5, 5.0),
+        ],
+    )
     def test_divide_varied_inputs(self, a, b, expected):
         """More division cases including non-integer quotients to catch mutations."""
         calc = Calculator()
@@ -419,4 +440,3 @@ class TestMutationKillSpecific:
         with pytest.raises(InvalidInputException) as e2:
             calc.add(calc.MIN_VALUE - 1, 0)
         assert "outside allowed range" in str(e2.value)
-
