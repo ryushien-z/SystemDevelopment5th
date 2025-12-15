@@ -23,8 +23,21 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pytest
+        pip install pytest pytest-cov
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Run Tests
+    - name: Run Tests with Coverage
       run: |
-        pytest tests/ -V
+        pytest tests/ -v --cov=src --cov-report=html --cov-report=term-missing
+    - name: Upload Coverage Html report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: coverage-report-${{ matrix.python-version }}
+        path: htmlcov/
+    - name: Coverage Summary
+      if: matrix.python-version == '3.9'
+      run: |
+        echo "## Coverage summary" >> $GITHUB_STEP_SUMMARY
+        ecgo '```\n' >> $GITHUB_STEP_SUMMARY
+        pytest tests/ --cov=src --cov-report=term | grep -E '(TOTAL|Name)' | tail -n 2 >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
